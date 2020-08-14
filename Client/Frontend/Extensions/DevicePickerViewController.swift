@@ -76,6 +76,7 @@ class DevicePickerViewController: UITableViewController {
         }
 
         loadList()
+        self.accessibilityElements = [navigationItem.leftBarButtonItem, navigationItem.titleView, navigationItem.rightBarButtonItem]
     }
 
     deinit {
@@ -109,6 +110,8 @@ class DevicePickerViewController: UITableViewController {
             } else {
                 self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: Strings.SendToSendButtonTitle, style: .done, target: self, action: #selector(self.send))
                 self.navigationItem.rightBarButtonItem?.isEnabled = false
+                self.navigationItem.rightBarButtonItem?.isAccessibilityElement = true
+                self.navigationItem.rightBarButtonItem?.accessibilityTraits = .notEnabled
             }
 
             self.loadingState = .loaded
@@ -187,6 +190,10 @@ class DevicePickerViewController: UITableViewController {
             tableView.reloadRows(at: [indexPath], with: .none)
         }
         navigationItem.rightBarButtonItem?.isEnabled = !selectedIdentifiers.isEmpty
+        if let sendEnabled = navigationItem.rightBarButtonItem?.isEnabled, sendEnabled == true {
+            navigationItem.rightBarButtonItem?.accessibilityTraits = .button
+            UIAccessibility.post(notification: .layoutChanged, argument: self.navigationItem.rightBarButtonItem)
+        }
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
